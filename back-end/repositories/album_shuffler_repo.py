@@ -1,0 +1,2 @@
+class AlbumShufflerRepo:
+    pass

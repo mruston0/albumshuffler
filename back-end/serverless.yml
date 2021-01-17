@@ -8,6 +8,8 @@ provider:
   lambdaHashingVersion: 20201221
   region: ca-central-1
   stage: dev
+  apiGateway:
+    shouldStartNameWithService: true
   iamRoleStatements:
   - Effect: "Allow"
     Action:
@@ -43,7 +45,16 @@ plugins:
 
 functions:
   GetRandomAlbum:
-    handler: functions.get_random_album
+    handler: functions/get_random_album.handler
+    events:
+      - http: 
+          path: randomalbum
+          method: get
+
+
+
+
+
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

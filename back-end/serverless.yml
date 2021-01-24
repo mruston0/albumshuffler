@@ -10,6 +10,7 @@ provider:
   stage: dev
   apiGateway:
     shouldStartNameWithService: true
+  logRetentionInDays: 30
   iamRoleStatements:
   - Effect: "Allow"
     Action:
@@ -23,9 +24,18 @@ provider:
       Fn::GetAtt: 
       - AlbumShufflerTable
       - Arn
+  httpApi:
+    cors: true
+  environment:
+    ALBUM_SHUFFLER_TABLE: ${self:custom.albumShufflerTable}
+    ALBUM_IMPORT_QUEUE: ${self:custom.albumImportQueue}
 
 plugins:
   - serverless-python-requirements
+
+custom:
+  albumShufflerTable: ${self:provider.stage}-AlbumShufflerTable
+  albumImportQueue: ${self:provider.stage}-AlbumImportQueue
 
 
 
@@ -47,9 +57,25 @@ functions:
   GetRandomAlbum:
     handler: functions/get_random_album.handler
     events:
-      - http: 
-          path: randomalbum
-          method: get
+      - httpApi: 
+          path: /randomalbum
+          method: GET
+  SpotifyAuthCallback:
+    handler: functions/spotify_auth_callback.handler
+    events:
+      - httpApi:
+          path: /spotifyauth
+          method: GET
+  AlbumImporter:
+    handler: functions/album_import_handler.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - AlbumImportQueue
+              - Arn
+          batchSize: 1
+          
 
 
 
@@ -113,6 +139,11 @@ resources:
             KeyType: HASH
           - AttributeName: sortKey
             KeyType: RANGE
+    AlbumImportQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.albumImportQueue}
+    
     # WIP, probably not needed
     # AlbumShufflerApiRole:
     #   Type: AWS::IAM::Role

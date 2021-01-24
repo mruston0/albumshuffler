@@ -9,11 +9,13 @@ import constants
 def handler(event, context):
     
     code = event.get('queryStringParameters', {}).get('code')
+    host = event['Headers']['orign']
+    redirect_uri = f"{host}/spotifyauth"
     if not code:
         raise Exception(f"Code not found in query string for event {event}")
 
     spotify_api = SpotifyApi()
-    tokens = spotify_api.get_access_tokens(code)
+    tokens = spotify_api.get_access_tokens(code, redirect_uri)
     user_profile = spotify_api.get_user_profile(access_token=tokens['access_token'])
     # Check if user exists, create new user if not exists
     spotify_user = AlbumShufflerRepo().get_spotify_user(user_profile['id'])

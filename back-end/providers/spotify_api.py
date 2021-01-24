@@ -4,15 +4,16 @@ import os
 SPOTIFY_APP_ID = os.environ['SPOTIFY_APP_ID']
 SPOTIFY_APP_SECRET = os.environ['SPOTIFY_APP_SECRET']
 
+DEFAULT_REDIRECT_URI = "http://lvh.me:3000/spotifyauth"
 
 class SpotifyApi:
 
-    def get_access_tokens(self, code):
+    def get_access_tokens(self, code, redirect_uri=DEFAULT_REDIRECT_URI):
         url = 'https://accounts.spotify.com/api/token'
         payload = {
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": "http://lvh.me:3000/spotifyauth",
+            "redirect_uri": redirect_uri,
             "client_id": SPOTIFY_APP_ID,
             "client_secret": SPOTIFY_APP_SECRET
         }

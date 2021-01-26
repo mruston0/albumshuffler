@@ -1,8 +1,8 @@
 import requests
 import os
 
-SPOTIFY_APP_ID = os.environ['SPOTIFY_APP_ID']
-SPOTIFY_APP_SECRET = os.environ['SPOTIFY_APP_SECRET']
+SPOTIFY_APP_ID = os.environ['SPOTIFY_CLIENT_ID']
+SPOTIFY_APP_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
 
 DEFAULT_REDIRECT_URI = "http://lvh.me:3000/spotifyauth"
 

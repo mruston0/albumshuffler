@@ -1,16 +1,12 @@
 import json
+from queues.album_import_queue import AlbumImportQueue
 
 def handler(event, context):
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": event
-    }
+    print(event)
+    for r in event.get('Records', []):
+        payload = json.loads(r['body'])
+        if 'id' not in payload and service not in payload:
+            raise Exception(f"Invalid SQS payload received {payload}")
+        AlbumImportQueue().process(payload['id'], payload['service'])
 
-    # parse the JWT, get the user_id and then pull a album....
-
-    response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-    }
-
-    return response
+    

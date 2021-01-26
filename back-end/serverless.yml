@@ -20,15 +20,28 @@ provider:
       - dynamodb:PutItem
       - dynamodb:UpdateItem
       - dynamodb:DeleteItem
+      - dynamodb:BatchWriteItem
     Resource:
       Fn::GetAtt: 
       - AlbumShufflerTable
+      - Arn
+  - Effect: "Allow"
+    Action:
+      - sqs:SendMessage
+      - sqs:GetQueueUrl
+      - sqs:ReceiveMessage
+    Resource:
+      Fn::GetAtt:
+      - AlbumImportQueue
       - Arn
   httpApi:
     cors: true
   environment:
     ALBUM_SHUFFLER_TABLE: ${self:custom.albumShufflerTable}
     ALBUM_IMPORT_QUEUE: ${self:custom.albumImportQueue}
+    SPOTIFY_CLIENT_ID: ${ssm:/AlbumShuffler/${self:provider.stage}/spotify_client_id~true}
+    SPOTIFY_CLIENT_SECRET: ${ssm:/AlbumShuffler/${self:provider.stage}/spotify_client_secret~true}
+    JWT_SECRET: ${ssm:/AlbumShuffler/${self:provider.stage}/jwt_secret~true}
 
 plugins:
   - serverless-python-requirements

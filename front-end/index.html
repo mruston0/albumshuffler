@@ -1,19 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <link rel="stylesheet" href="style.css" />
 </head>
-<script>
-    function spotifyLogin() {
-        var scopes = 'user-library-read';
-        var APP_ID = '50282a1aed904387aba31b12b9a33050';
-        var redirect_uri = 'http://lvh.me:3000/spotifyauth';
-        current_url = window.location.host;
-        const url = `https://accounts.spotify.com/authorize?response_type=code&client_id=${APP_ID}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(redirect_uri)}`;
-        console.log(url);
-        window.location.href = url;
+<script type="module">
+    import {AlbumShufflerApi} from './api.js';
+
+    function selectProvider(provider) {
+        let api = new AlbumShufflerApi();
+        if (provider === 'SPOTIFY') {
+            api.login_spotify();
+        }
     }
+
+    document.onreadystatechange = function () {
+        if (document.readyState == "complete") {
+            const item = localStorage.getItem('albumShuffler.spotify.authToken');
+            if (item != null) {
+                window.location = '/spotify.html';
+            } else {
+                document.getElementById("main").style.display = "block";
+            }
+      }
+    }
+
+    window.selectProvider = selectProvider;
 </script>
 <body>
-    Hello World
-    <button onclick="spotifyLogin()">Spotify Login</button>
+    <main id="main" hidden>
+        <h1>Please select your music provider</h1>
+        <a href="javascript:void(0);" onclick="selectProvider('SPOTIFY')">
+            <img src='./assets/img/Spotify_Logo_RGB_Green.png' alt='missing' width=400 />
+        </a>
+    </main>
 </body>

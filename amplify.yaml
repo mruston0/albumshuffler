@@ -9,6 +9,9 @@ frontend:
     baseDirectory: ./front-end
     files:
       - 'assets/*'
+      - 'spotify.html'
+      - 'style.css'
+      - 'api.js'
       - 'index.html'
   cache:
     paths: []

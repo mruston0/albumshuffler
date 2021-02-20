@@ -35,7 +35,9 @@ provider:
       - AlbumImportQueue
       - Arn
   httpApi:
-    cors: true
+    cors:
+     maxAge: 6000
+
   environment:
     ALBUM_SHUFFLER_TABLE: ${self:custom.albumShufflerTable}
     ALBUM_IMPORT_QUEUE: ${self:custom.albumImportQueue}

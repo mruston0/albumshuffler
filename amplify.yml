@@ -8,7 +8,7 @@ frontend:
     # IMPORTANT - Please verify your build output directory
     baseDirectory: ./front-end
     files:
-      - 'assets/*'
+      - 'assets/img/*'
       - 'spotify.html'
       - 'style.css'
       - 'api.js'

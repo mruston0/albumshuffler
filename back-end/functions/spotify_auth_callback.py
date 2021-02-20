@@ -55,7 +55,7 @@ def handler(event, context):
     response = {
         "statusCode": 302,
         "headers": {
-            "Location": f"http://lvh.me:3000/spotify.html?token={jwt_token.decode('utf-8')}"        # This should be env var based on dev/prod
+            "Location": f"http://lvh.me:3000/spotify.html?token={jwt_token}"        # This should be env var based on dev/prod
         }
     }
 

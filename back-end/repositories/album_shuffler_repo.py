@@ -9,9 +9,10 @@ TABLE_NAME = os.environ.get('ALBUM_SHUFFLER_TABLE', 'dev-AlbumShufflerTable')
 
 class AlbumShufflerRepo:
 
-    def __init__(self):
+    def __init__(self, user_album_count_cache):
         self.dynamodb = boto3.resource('dynamodb')
         self.table = self.dynamodb.Table(TABLE_NAME)
+        self.user_album_count_cache = user_album_count_cache
     
     def get_spotify_user(self, id):
         return self.__get_user(id, 'SPOTIFY')
@@ -37,7 +38,8 @@ class AlbumShufflerRepo:
         )
 
     def create_deezer_user(self, payload):
-        pass # do this laters.
+        # TODO for Deezer support eventually
+        pass
 
     def get_album_spotify(self, user_id, album_id):
         item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUM#{constants.SERVICE_SPOTIFY}#{album_id}'})
@@ -48,12 +50,11 @@ class AlbumShufflerRepo:
         return item.get('Item')['count']
 
     def get_random_album_spotify(self, user_id):
-        count = self.get_user_album_count_spotify(user_id)
+        count = self.user_album_count_cache.get('user_id', self.get_user_album_count_spotify(user_id))
+        self.user_album_count_cache['user_id'] = count
         album_choice = random.randrange(0, count)
         album = self.get_album_spotify(user_id, album_choice)
-
         return album
-
 
     def save_albums_spotify(self, user_id, albums):
         self.table.put_item(

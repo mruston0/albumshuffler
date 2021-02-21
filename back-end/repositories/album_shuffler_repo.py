@@ -37,9 +37,6 @@ class AlbumShufflerRepo:
             }
         )
 
-    def create_deezer_user(self, payload):
-        # TODO for Deezer support eventually
-        pass
 
     def get_album_spotify(self, user_id, album_id):
         item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUM#{constants.SERVICE_SPOTIFY}#{album_id}'})

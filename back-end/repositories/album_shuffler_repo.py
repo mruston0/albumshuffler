@@ -66,7 +66,7 @@ class AlbumShufflerRepo:
         count = 1
         with self.table.batch_writer() as batch:
             for a in albums:
-                print(f"Saving album {a['name']}")
+                print(f"User {user_id} saving album {a['name']}")
                 batch.put_item(
                     Item={
                         'id': user_id,
@@ -101,7 +101,4 @@ class AlbumShufflerRepo:
                 'count': count,
             }
         )
-    
-    def save_albums_deezer(self, user_id):
-        pass
         

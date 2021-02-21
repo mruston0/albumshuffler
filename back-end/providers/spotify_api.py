@@ -80,7 +80,6 @@ class SpotifyApi:
         for item in response_json['items']:
             albums.append(item['album'])
         if response_json.get('next'):
-            print(f"Paging with {response_json.get('next')}")
             albums.extend(self.__get_albums(access_token, url=response_json['next']))
         return albums
 

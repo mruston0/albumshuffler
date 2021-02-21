@@ -44,6 +44,7 @@ provider:
     SPOTIFY_CLIENT_ID: ${ssm:/AlbumShuffler/${self:provider.stage}/spotify_client_id~true}
     SPOTIFY_CLIENT_SECRET: ${ssm:/AlbumShuffler/${self:provider.stage}/spotify_client_secret~true}
     JWT_SECRET: ${ssm:/AlbumShuffler/${self:provider.stage}/jwt_secret~true}
+    STAGE: ${self:provider.stage}
 
 plugins:
   - serverless-python-requirements

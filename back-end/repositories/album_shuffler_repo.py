@@ -9,10 +9,10 @@ TABLE_NAME = os.environ.get('ALBUM_SHUFFLER_TABLE', 'dev-AlbumShufflerTable')
 
 class AlbumShufflerRepo:
 
-    def __init__(self, user_album_count_cache):
+    def __init__(self, user_album_count_cache=None):
         self.dynamodb = boto3.resource('dynamodb')
         self.table = self.dynamodb.Table(TABLE_NAME)
-        self.user_album_count_cache = user_album_count_cache
+        self.user_album_count_cache = user_album_count_cache if user_album_count_cache else {}
     
     def get_spotify_user(self, id):
         return self.__get_user(id, 'SPOTIFY')

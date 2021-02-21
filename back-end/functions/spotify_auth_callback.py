@@ -9,6 +9,7 @@ from queues.album_import_queue import AlbumImportQueue
 import constants
 
 jwt_secret = os.environ['JWT_SECRET']
+stage = os.environ['STAGE']
 
 def handler(event, context):
     
@@ -39,7 +40,7 @@ def handler(event, context):
             'refresh_token': tokens['refresh_token'],
             'access_token_expiry': tokens['expires_in']
         }
-        AlbumShufflerRepo.create_spotify_user(user_payload)
+        AlbumShufflerRepo().create_spotify_user(user_payload)
 
     AlbumImportQueue().add(user_profile['id'], service=constants.SERVICE_SPOTIFY)
     
@@ -52,10 +53,11 @@ def handler(event, context):
       algorithm='HS256'
     )
 
+    site = 'http://lvh.me:3000' if stage == 'dev' else 'https://www.albumshuffler.com'
     response = {
         "statusCode": 302,
         "headers": {
-            "Location": f"http://lvh.me:3000/spotify.html?token={jwt_token}"        # replace this when I have production URLs configured.
+            "Location": f"{site}/spotify.html?token={jwt_token}"        # replace this when I have production URLs configured.
         }
     }
 

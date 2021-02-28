@@ -1,74 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <script type="module">
-    import { AlbumShufflerApi } from './api.js';
 
-    function refresh_on_url_token() {
-      console.log("refreshing since to remove token from URL....");
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      if (urlParams.get('token')) {
+<head>
+  <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<script type="module">
+  import { AlbumShufflerApi } from './api.js';
 
-        localStorage.setItem('albumShuffler.spotify.authToken', urlParams.get('token'));
-        // TODO: Tweak this later? I don't want the *.html part in the URL....
-        window.history.replaceState({}, document.title, "/spotify.html");
+  function refresh_on_url_token() {
+    console.log("refreshing since to remove token from URL....");
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if (urlParams.get('token')) {
+
+      localStorage.setItem('albumShuffler.spotify.authToken', urlParams.get('token'));
+      // TODO: Tweak this later? I don't want the *.html part in the URL....
+      window.history.replaceState({}, document.title, "/spotify.html");
+    }
+  }
+
+  function shuffle() {
+    let api = new AlbumShufflerApi();
+    api.get_spotify_random_album()
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("helpText").removeAttribute("hidden");
+        document.getElementById("albumTitle").innerText = data.title;
+        document.getElementById("albumImage").src = data.cover_big;
+        document.getElementById("albumLink").href = `spotify://album/${data.album_id}`
+      })
+  }
+
+  document.onreadystatechange = function () {
+    if (document.readyState == "complete") {
+      refresh_on_url_token();
+      const item = localStorage.getItem('albumShuffler.spotify.authToken');
+      if (item == null) {
+        window.location.href = '/'
       }
     }
 
-    function shuffle() {
-      document.getElementById("albumTitle").innerText = '';
-      document.getElementById("albumImage").src = '';
+    window.shuffle = shuffle;
+  }
+</script>
 
-      let api = new AlbumShufflerApi();
+<body>
+  <main>
+    <div class="shufflerHeader">
+      <img src='./assets/img/Spotify_Logo_RGB_Green.png' class="spotifyLogo" alt='missing'>
+      <h1><i>Album Shuffler</i>
+      </h1>
+    </div>
 
-      // TODO: This is generating two network requests. 
-      // Can I cache the cors so we don't have to do the pre-flight OPTIONS every time?
+    <div id="spotifyShuffle" class="shufflerHeader">
+      <button class="shuffleButtonStyle" onclick="shuffle()">Shuffle</button>
+    </div>
 
-      api.get_spotify_random_album()
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          document.getElementById("albumImage").src = data.cover_big;
-          document.getElementById("albumTitle").innerText = data.title;
-          document.getElementById("albumLink").href = `spotify://album/${data.album_id}`
-        })
-    }
+    <h1 style="text-align: center;">
+      <span id="albumTitle"></span>
+    
+    </h1>  
+      <a id="albumLink">
+        <img id="albumImage" class="albumImage" />
+      </a>
+      <div id="helpText" class="helpText" hidden>Click album art to launch Spotify</div>
+  </main>
+</body>
 
-    document.onreadystatechange = function () {
-      if (document.readyState == "complete") {
-        refresh_on_url_token();
-        const item = localStorage.getItem('albumShuffler.spotify.authToken');
-        if (item == null) {
-          window.location.href = '/'
-        }
-      }
-
-      window.shuffle = shuffle;
-    }
-  </script>
-  <body>
-    <main>
-        <div class="shufflerHeader">
-          <img src='./assets/img/Spotify_Logo_RGB_Green.png' class="spotifyLogo" alt='missing'>
-          <h1><i>Album Shuffler</i>
-          </h1>
-      </div>
-
-      <div id="spotifyShuffle" class="shufflerHeader">
-        <button class="shuffleButtonStyle" onclick="shuffle()">Shuffle</button>
-      </div>
-      
-      <div class="album">
-          <h1 style="text-align: center;">
-            <span id="albumTitle"></span>
-          </h1>
-          <a id="albumLink"><img id="albumImage" class="albumImage" /></a>
-        </div>
-      </div>
-    </main>
-  </body>
 </html>

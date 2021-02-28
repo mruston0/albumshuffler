@@ -29,3 +29,10 @@ body {
 .marginAuto {
     margin: auto;
 }
+
+.shuffleButtonStyle {
+    width: 5em;
+    font-size: 2em;
+    /* background-color:#2196f391; */
+    border-radius: 6px;
+}

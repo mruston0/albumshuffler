@@ -1,7 +1,7 @@
 main {
     text-align: center;
     padding: 1em;
-    max-width: 240px;
+    /* max-width: 200px;  */
     margin: 0 auto;
 }
 
@@ -9,11 +9,11 @@ body {
       font-family: "Mabry Pro Bold", "Mier B", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
  }
 
-@media (min-width: 640px) {
+/* @media (min-width: 700px) {
     main {
         max-width: none;
     }
-}
+} */
 
 .shufflerHeader {
     display: flex;
@@ -40,3 +40,28 @@ body {
 .helpText {
     color: grey;
 }
+
+.albumImage {
+    max-width: 500px;
+}
+
+.button {
+    padding: 15px 25px;
+    font-size: 24px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  
+  .button:hover {background-color: #3e8e41}
+  
+  .button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }

@@ -124,6 +124,8 @@ class AlbumShufflerRepo:
                         }
                     )
                     count = count+1
+                    if count >= SPOTIFY_ALBUM_LIMIT:
+                        break
             
             self.table.put_item(
             Item={

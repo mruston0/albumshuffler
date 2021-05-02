@@ -1,4 +1,5 @@
 import json
+import sentry
 from queues.album_import_queue import AlbumImportQueue
 
 def handler(event, context):

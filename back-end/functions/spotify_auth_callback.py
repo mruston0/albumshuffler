@@ -2,6 +2,7 @@ import os
 import json
 import boto3
 import jwt
+import sentry
 from os import access
 from providers.spotify_api import SpotifyApi
 from repositories.album_shuffler_repo import AlbumShufflerRepo

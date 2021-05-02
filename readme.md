@@ -9,7 +9,7 @@ Built with [Serverless Framework](serverless.com) using API Gateway/AWS Lambda/D
 
 ### Dev
 
-Run `serverless deploy` to deploy backend. Then `npm run dev` in the front-end folder.
+Run `serverless deploy` to deploy backend. Then `npm run dev` in the front-end folder. Then load lvh.me:3000.
 
 ### Prod
 

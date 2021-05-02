@@ -70,8 +70,8 @@ functions:
     handler: functions/refresh_albums.handler
     events:
       - httpApi:
-        path: /refresh
-        method: POST
+          path: /refresh
+          method: POST
   AlbumImporter:
     handler: functions/album_import_handler.handler
     events:

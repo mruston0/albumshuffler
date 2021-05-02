@@ -36,9 +36,11 @@
   document.onreadystatechange = function () {
     if (document.readyState == "complete") {
       refresh_on_url_token();
-      const item = localStorage.getItem('albumShuffler.spotify.authToken');
-      if (item == null) {
-        window.location.href = '/'
+      let item = localStorage.getItem('albumShuffler.spotify.authToken');
+      if (item != null) {
+        //window.location.href = '/'
+        let api = new AlbumShufflerApi();
+        api.refresh_albums();
       }
     }
 

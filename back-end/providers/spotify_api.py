@@ -45,9 +45,9 @@ class SpotifyApi:
 
 
     def get_albums(self, access_token):
-        return self.__get_albums(access_token)
+        return self._get_albums(access_token)
 
-    def __get_albums(self, access_token, url=None):
+    def _get_albums(self, access_token, url=None):
         if not url:
             url = 'https://api.spotify.com/v1/me/albums'
         response = requests.get(
@@ -58,7 +58,7 @@ class SpotifyApi:
         for item in response_json['items']:
             albums.append(item['album'])
         if response_json.get('next'):
-            albums.extend(self.__get_albums(access_token, url=response_json['next']))
+            albums.extend(self._get_albums(access_token, url=response_json['next']))
         return albums
 
 

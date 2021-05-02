@@ -66,6 +66,12 @@ functions:
       - httpApi:
           path: /spotifyauth
           method: GET
+  RefreshAlbums:
+    handler: functions/refresh_albums.handler
+    events:
+      - httpApi:
+          path: /refresh
+          method: POST
   AlbumImporter:
     handler: functions/album_import_handler.handler
     events:
@@ -76,7 +82,6 @@ functions:
               - Arn
           batchSize: 1
 
-# you can add CloudFormation resource templates here
 resources:
   Resources:
     AlbumShufflerTable:

@@ -47,7 +47,34 @@ class AlbumShufflerApi {
         })
       }
 
-    
+      refresh_albums() {
+        console.log("Should we refresh albums?")
+        const vars = this.get_spotify_env_vars();
+        const token = localStorage.getItem('albumShuffler.spotify.authToken');
+        const lastRefresh = localStorage.getItem('albumShuffler.spotify.lastRefresh');
+        
+        let refreshNeeded = false;
+        if (lastRefresh === null) {
+          localStorage.setItem('albumShuffler.spotify.lastRefresh', new Date().toISOString())
+          refreshNeeded = true;
+        }
+        else {
+          const lastRefreshDiff = Math.abs(new Date() - lastRefresh) / 36e5;
+          refreshNeeded = lastRefreshDiff >= 24;
+        }
+        
+        if (refreshNeeded) {
+          console.log("Refreshing albums...")
+          return fetch(`${vars.API_ENDPOINT_URI}/refresh`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token,
+            }, 
+          });
+        }
+      }
 }
 
 export { AlbumShufflerApi }

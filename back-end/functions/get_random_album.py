@@ -1,6 +1,7 @@
 import os
 import json
 import jwt
+import sentry
 from repositories.album_shuffler_repo import AlbumShufflerRepo
 
 jwt_secret = os.environ['JWT_SECRET']

@@ -9,24 +9,29 @@ ALBUM_IMPORT_QUEUE = os.environ.get('ALBUM_IMPORT_QUEUE')
 
 class AlbumImportQueue:
 
-    def add(self, user_id, service):
+    def add(self, user_id, service, delay=None):
         sqs = boto3.resource('sqs')
         queue = sqs.get_queue_by_name(QueueName=ALBUM_IMPORT_QUEUE)
         payload = {
             'id': user_id,
             'service': service
         }
-        queue.send_message(MessageBody=json.dumps(payload))
 
+        delay = delay if delay else 0
+
+        queue.send_message(
+            MessageBody=json.dumps(payload),
+            DelaySeconds=delay
+        )
     
     def process(self, user_id, service):
         if service == constants.SERVICE_SPOTIFY:
-            return self.__process_spotify(user_id)
+            return self._process_spotify(user_id)
         if service == constants.SERVICE_DEEZER:
-            return self.__process_deezer(user_id)
+            return self._process_deezer(user_id)
         raise Exception("Invalid service")
     
-    def __process_spotify(self, user_id):
+    def _process_spotify(self, user_id):
         repo = AlbumShufflerRepo()
         user = repo.get_spotify_user(user_id)
         # This could be optimized. We could check if our access_token is still good....
@@ -38,5 +43,5 @@ class AlbumImportQueue:
         albums = spotify_api.get_albums(access_token=tokens['access_token'])
         repo.save_albums_spotify(user_id, albums)
 
-    def __process_deezer(self, user_id):
+    def _process_deezer(self, user_id):
         pass

@@ -8,3 +8,6 @@ sentry_sdk.init(
     integrations=[AwsLambdaIntegration()],
     traces_sample_rate=1.0  
 )
+
+def set_user(user):
+    sentry_sdk.set_user(user) if user else None

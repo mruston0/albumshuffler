@@ -23,7 +23,7 @@ def handler(event, context):
         if bearer != PREFIX:
             raise ValueError('Invalid token')
         claims = jwt.decode(token, jwt_secret, algorithms=['HS256'])
-
+        sentry.set_user(claims['id'])
         album_count_obj = AlbumShufflerRepo().get_user_album_count_spotify(claims['id'])
         last_updated = album_count_obj.get('updated')
 

@@ -48,7 +48,6 @@ class AlbumShufflerApi {
       }
 
       refresh_albums() {
-        console.log("Should we refresh albums?")
         const vars = this.get_spotify_env_vars();
         const token = localStorage.getItem('albumShuffler.spotify.authToken');
         const lastRefresh = localStorage.getItem('albumShuffler.spotify.lastRefresh');
@@ -64,7 +63,6 @@ class AlbumShufflerApi {
         }
         
         if (refreshNeeded) {
-          console.log("Refreshing albums...")
           return fetch(`${vars.API_ENDPOINT_URI}/refresh`,
           {
             method: 'POST',

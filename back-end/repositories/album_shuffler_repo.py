@@ -33,13 +33,21 @@ class AlbumShufflerRepo:
     def create_spotify_user(self, payload):
         self.table.put_item(
             Item={
-                'id': payload["id"],
+                'id': str(payload["id"]),
                 'sortKey': 'USER#SPOTIFY',
                 'name': payload['display_name'],
                 'image': payload['image'],
                 'access_token': payload['access_token'],
                 'refresh_token': payload['refresh_token'],
                 'access_token_expiry': payload['access_token_expiry']
+            }
+        )
+        # Populate USERLIST
+        self.table.put_item(
+            Item={
+                'id': 'USERLIST',
+                'sortKey': str(payload["id"]),
+                'name': payload['display_name']
             }
         )
 

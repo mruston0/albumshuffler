@@ -16,6 +16,8 @@ def handler(event, context):
         bearer, _, token = auth_header.partition(' ')
         if bearer != PREFIX:
             raise ValueError('Invalid token')
+        if not token:
+            return status_401()
         claims = jwt.decode(token, jwt_secret, algorithms=['HS256'])
         sentry.set_user(claims['id'])
         album = AlbumShufflerRepo(user_album_count_cache).get_random_album_spotify(claims['id'])
@@ -25,6 +27,7 @@ def handler(event, context):
             "body": json.dumps(album)
         }
     else:
-        return {
-            "statusCode": 401
-        }
+        return status_401()
+
+def status_401():
+    return { "statusCode": 401 }

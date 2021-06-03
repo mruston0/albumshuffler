@@ -47,7 +47,7 @@ class AlbumShufflerApi {
         })
       }
 
-      refresh_albums() {
+      maybe_refresh_albums() {
         const vars = this.get_spotify_env_vars();
         const token = localStorage.getItem('albumShuffler.spotify.authToken');
         const lastRefresh = localStorage.getItem('albumShuffler.spotify.lastRefresh');

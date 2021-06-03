@@ -87,6 +87,9 @@ class AlbumShufflerRepo:
         album = self.get_album_spotify(user_id, album_choice)
         return album
 
+    def get_random_albums_spotify(self, user_id, count):
+        count = self.user_album_count_cache.get('user_id', self.get_user_album_count_spotify(user_id)['count'])
+
     def save_albums_spotify(self, user_id, albums):
         self.table.put_item(
             Item={

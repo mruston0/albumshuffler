@@ -38,7 +38,8 @@
       refresh_on_url_token();
       let item = localStorage.getItem('albumShuffler.spotify.authToken');
       if (item != null) {
-        new AlbumShufflerApi().refresh_albums();
+        new AlbumShufflerApi().maybe_refresh_albums();
+        shuffle();
       }
     }
 

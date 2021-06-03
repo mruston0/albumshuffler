@@ -74,6 +74,7 @@ functions:
           method: POST
   AlbumImporter:
     handler: functions/album_import_handler.handler
+    timeout: 30
     events:
       - sqs:
           arn:
@@ -103,3 +104,5 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.albumImportQueue}
+        MessageRetentionPeriod: 7200
+ 

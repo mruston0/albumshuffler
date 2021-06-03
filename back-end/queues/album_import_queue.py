@@ -2,6 +2,7 @@ import os
 import json
 import boto3
 import constants
+import sentry
 from repositories.album_shuffler_repo import AlbumShufflerRepo
 from providers.spotify_api import SpotifyApi
 
@@ -25,6 +26,7 @@ class AlbumImportQueue:
         )
     
     def process(self, user_id, service):
+        sentry.set_user(user_id)
         if service == constants.SERVICE_SPOTIFY:
             return self._process_spotify(user_id)
         if service == constants.SERVICE_DEEZER:

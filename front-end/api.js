@@ -54,15 +54,15 @@ class AlbumShufflerApi {
         
         let refreshNeeded = false;
         if (lastRefresh === null) {
-          localStorage.setItem('albumShuffler.spotify.lastRefresh', new Date().toISOString())
           refreshNeeded = true;
         }
         else {
-          const lastRefreshDiff = Math.abs(new Date() - lastRefresh) / 36e5;
+          const lastRefreshDiff = Math.abs(new Date() - new Date(lastRefresh)) / 36e5;
           refreshNeeded = lastRefreshDiff >= 24;
         }
         
         if (refreshNeeded) {
+          localStorage.setItem('albumShuffler.spotify.lastRefresh', new Date().toISOString())
           return fetch(`${vars.API_ENDPOINT_URI}/refresh`,
           {
             method: 'POST',

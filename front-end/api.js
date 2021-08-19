@@ -37,14 +37,20 @@ class AlbumShufflerApi {
 
       get_spotify_random_album() {
         const vars = this.get_spotify_env_vars();
-        const token = localStorage.getItem('albumShuffler.spotify.authToken')  
-        return fetch(`${vars.API_ENDPOINT_URI}/randomalbum`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-          }
-        })
+        const token = localStorage.getItem('albumShuffler.spotify.authToken');
+        if (token == null) {
+          login_spotify();
+        }
+        else {
+          return fetch(`${vars.API_ENDPOINT_URI}/randomalbum`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token,
+            }
+          });
+        }
+        
       }
 
       maybe_refresh_albums() {

@@ -39,7 +39,7 @@ class AlbumShufflerApi {
         const vars = this.get_spotify_env_vars();
         const token = localStorage.getItem('albumShuffler.spotify.authToken');
         if (token == null) {
-          login_spotify();
+          this.login_spotify()
         }
         else {
           return fetch(`${vars.API_ENDPOINT_URI}/randomalbum`,

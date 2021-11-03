@@ -5,19 +5,28 @@
     <title>Album Shuffler</title>
     <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="style.css" />
+    
 </head>
-<script type="module">
-    import * as Sentry from "@sentry/browser";
-    import { Integrations } from "@sentry/tracing";
-
+<script
+  src="https://browser.sentry-cdn.com/6.13.3/bundle.min.js"
+  integrity="sha384-sGMbmxgVprpEFMz6afNDyADd4Kav86v5Tvo2Y6w5t8tHUn1P1at3lCjN7IQo2c7E"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://browser.sentry-cdn.com/6.13.3/bundle.tracing.min.js"
+  integrity="sha384-bMCNwkS0NNIDdeiv/LpGYQjDzjnZSqqN12IWUUyPlSTLXQloo4EAl9P9mW9AyVzw"
+  crossorigin="anonymous"
+></script>
+<script>
     Sentry.init({
-    dsn: "https://ccf14ba5afbf48b08d5a2b0c03e08fde@o603606.ingest.sentry.io/5744550",
-    release: "albumshuffler",
-    integrations: [new Integrations.BrowserTracing()],
-    tracesSampleRate: 1.0,
+        dsn: "https://ccf14ba5afbf48b08d5a2b0c03e08fde@o603606.ingest.sentry.io/5744550",
+        release: "albumshuffler",
+        integrations: [new Sentry.Integrations.BrowserTracing()],
+       tracesSampleRate: 1.0,
     });
-    
-    
+</script>
+<script type="module">
+
     import {AlbumShufflerApi} from './api.js';
 
     function selectProvider(provider) {

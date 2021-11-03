@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/browser": "^6.13.3",
+    "@sentry/tracing": "^6.13.3",
     "lite-server": "^2.6.1"
   }
 }

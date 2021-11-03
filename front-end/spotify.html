@@ -7,6 +7,16 @@
   <meta name="viewport" content="width=550, user-scalable=yes">
 </head>
 <script type="module">
+  import * as Sentry from "@sentry/browser";
+  import { Integrations } from "@sentry/tracing";
+
+  Sentry.init({
+  dsn: "https://ccf14ba5afbf48b08d5a2b0c03e08fde@o603606.ingest.sentry.io/5744550",
+  release: "albumshuffler",
+  integrations: [new Integrations.BrowserTracing()],
+  tracesSampleRate: 1.0,
+  });
+  
   import { AlbumShufflerApi } from './api.js';
 
   function refresh_on_url_token() {

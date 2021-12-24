@@ -1,5 +1,5 @@
 
-**Live Site:** albumshuffler.com
+**Live Site:** [albumshuffler.com]
 
 AlbumShuffler is a minimalist web app that randomly selects an album from your Spotify favourites. Click the album art to open the native Spotify app on your device. Works on Windows/Mac/iOS/Android. Requires read only permissions on your Spotify profile.
 

@@ -14,3 +14,8 @@ customHeaders:
     headers:
       - key: 'Cache-Control'
         value: 's-maxage:86401'
+  - pattern: 'style.css'
+    headers:
+      - key: 'Cache-Control'
+        value: 's-maxage:3600'
+  

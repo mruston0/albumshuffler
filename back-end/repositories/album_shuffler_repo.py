@@ -51,13 +51,11 @@ class AlbumShufflerRepo:
             }
         )
 
-
     def get_album_spotify(self, user_id, album_id):
         item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUM#{constants.SERVICE_SPOTIFY}#{album_id}'})
         return item.get('Item')
 
     def get_album_ids_spotify(self, user_id):
-        
         query_args = {
             'ProjectionExpression':'album_id',
             'KeyConditionExpression':
@@ -86,9 +84,6 @@ class AlbumShufflerRepo:
         album_choice = random.randrange(0, count)
         album = self.get_album_spotify(user_id, album_choice)
         return album
-
-    def get_random_albums_spotify(self, user_id, count):
-        count = self.user_album_count_cache.get('user_id', self.get_user_album_count_spotify(user_id)['count'])
 
     def save_albums_spotify(self, user_id, albums):
         self.table.put_item(

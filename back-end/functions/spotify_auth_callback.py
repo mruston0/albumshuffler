@@ -48,7 +48,7 @@ def handler(event, context):
     jwt_token = jwt.encode(
       {
         'id': user_profile["id"], 
-        'service':constants.SERVICE_DEEZER
+        'service':constants.SERVICE_SPOTIFY
       },
       jwt_secret, 
       algorithm='HS256'

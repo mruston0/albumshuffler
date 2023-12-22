@@ -8,6 +8,7 @@ jwt_secret = os.environ['JWT_SECRET']
 PREFIX = 'Bearer'
 
 user_album_count_cache = {}
+user_recent_album_cache = {}
 
 def handler(event, context):
     print(event)
@@ -20,7 +21,7 @@ def handler(event, context):
             return status_401()
         claims = jwt.decode(token, jwt_secret, algorithms=['HS256'])
         sentry.set_user(claims['id'])
-        album = AlbumShufflerRepo(user_album_count_cache).get_random_album_spotify(claims['id'])
+        album = AlbumShufflerRepo(user_album_count_cache, user_recent_album_cache).get_random_album_spotify(claims['id'])
 
         return {
             "statusCode": 200,
@@ -31,3 +32,5 @@ def handler(event, context):
 
 def status_401():
     return { "statusCode": 401 }
+
+

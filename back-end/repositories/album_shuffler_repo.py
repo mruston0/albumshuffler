@@ -5,6 +5,7 @@ import datetime
 import random
 import logging
 import constants
+from data_structures import RecentAlbumInMemoryCache
 
 _logger = logging.getLogger(__name__)
 
@@ -15,10 +16,11 @@ SPOTIFY_ALBUM_LIMIT = 3000
 
 class AlbumShufflerRepo:
 
-    def __init__(self, user_album_count_cache=None):
+    def __init__(self, user_album_count_cache=None, user_recent_album_cache=None):
         self.dynamodb = boto3.resource('dynamodb')
         self.table = self.dynamodb.Table(TABLE_NAME)
         self.user_album_count_cache = user_album_count_cache if user_album_count_cache else {}
+        self.user_recent_album_cache = user_recent_album_cache if user_recent_album_cache else {}
     
     def get_spotify_user(self, id):
         return self._get_user(id, 'SPOTIFY')
@@ -79,10 +81,19 @@ class AlbumShufflerRepo:
         return item.get('Item')
 
     def get_random_album_spotify(self, user_id):
+        if not user_id in self.user_recent_album_cache:
+            self.user_recent_album_cache[user_id] = RecentAlbumInMemoryCache()
+
         count = self.user_album_count_cache.get('user_id', self.get_user_album_count_spotify(user_id)['count'])
         self.user_album_count_cache['user_id'] = count
-        album_choice = random.randrange(0, count)
+        for i in range(0, count):
+            album_choice = random.randrange(0, count)
+            if not self.user_recent_album_cache[user_id].exists(album_choice):
+                break
+
         album = self.get_album_spotify(user_id, album_choice)
+        self.user_recent_album_cache[user_id].add(album_choice)
+
         return album
 
     def save_albums_spotify(self, user_id, albums):

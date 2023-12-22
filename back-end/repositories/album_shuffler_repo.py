@@ -86,7 +86,9 @@ class AlbumShufflerRepo:
 
         count = self.user_album_count_cache.get('user_id', self.get_user_album_count_spotify(user_id)['count'])
         self.user_album_count_cache['user_id'] = count
-        for i in range(0, count):
+        
+        range_max = min(count, 1000)
+        for i in range(0, int(range_max)):
             album_choice = random.randrange(0, count)
             if not self.user_recent_album_cache[user_id].exists(album_choice):
                 break

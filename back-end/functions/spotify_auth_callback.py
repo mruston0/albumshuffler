@@ -42,6 +42,13 @@ def handler(event, context):
             'access_token_expiry': tokens['expires_in']
         }
         AlbumShufflerRepo().create_spotify_user(user_payload)
+    else:
+        AlbumShufflerRepo().update_spotify_user_tokens(
+            user_profile['id'], 
+            tokens['access_token'], 
+            tokens['refresh_token'], 
+            tokens['expires_in']
+        )
 
     AlbumImportQueue().add(user_profile['id'], service=constants.SERVICE_SPOTIFY)
     

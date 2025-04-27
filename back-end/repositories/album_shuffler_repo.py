@@ -53,6 +53,20 @@ class AlbumShufflerRepo:
             }
         )
 
+    def update_spotify_user_tokens(self, user_id, access_token, refresh_token, access_token_expiry):
+        self.table.update_item(
+            Key={
+                'id': user_id,
+                'sortKey': 'USER#SPOTIFY'
+            },
+            UpdateExpression="SET access_token = :access_token, refresh_token = :refresh_token, access_token_expiry = :access_token_expiry",
+            ExpressionAttributeValues={
+                ':access_token': access_token,
+                ':refresh_token': refresh_token,
+                ':access_token_expiry': access_token_expiry
+            }
+        )
+
     def get_album_spotify(self, user_id, album_id):
         item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUM#{constants.SERVICE_SPOTIFY}#{album_id}'})
         return item.get('Item')
@@ -167,4 +181,3 @@ class AlbumShufflerRepo:
                 'completed': datetime.datetime.utcnow().isoformat()
             }
         )
-        

@@ -45,12 +45,32 @@
     api.get_spotify_random_album()
       .then(response => response.json())
       .then(data => {
-        document.getElementById("helpText").removeAttribute("hidden");
-        document.getElementById("artist").innerText = data.artist.name;
-        document.getElementById("albumTitle").innerText = data.title;
-        document.getElementById("albumImage").src = data.cover_big;
-        document.getElementById("albumLink").href = `spotify://album/${data.album_id}`;
-        document.getElementById("spotifyWebPlayerLink").href = `https://open.spotify.com/album/${data.album_id}`;
+        if (!data || !data.artist || !data.title) {
+          // Handle case when no album data is returned
+          document.getElementById("helpText").setAttribute("hidden", "hidden");
+          document.getElementById("artist").innerText = "No albums found";
+          document.getElementById("albumTitle").innerText = "Please import your albums first or wait a few minutes for album import to finish.";
+          document.getElementById("albumImage").src = "./assets/img/shuffle_logo.png";
+          document.getElementById("albumLink").href = "#";
+          document.getElementById("spotifyWebPlayerLink").href = "#";
+        }
+        else {
+          document.getElementById("helpText").removeAttribute("hidden");
+          document.getElementById("artist").innerText = data.artist.name;
+          document.getElementById("albumTitle").innerText = data.title;
+          document.getElementById("albumImage").src = data.cover_big;
+          document.getElementById("albumLink").href = `spotify://album/${data.album_id}`;
+          document.getElementById("spotifyWebPlayerLink").href = `https://open.spotify.com/album/${data.album_id}`;
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching random album:', error);
+        document.getElementById("helpText").setAttribute("hidden", "hidden");
+        document.getElementById("artist").innerText = "Error";
+        document.getElementById("albumTitle").innerText = "Failed to load album";
+        document.getElementById("albumImage").src = "./assets/img/shuffle_logo.png";
+        document.getElementById("albumLink").href = "#";
+        document.getElementById("spotifyWebPlayerLink").href = "#";
       })
   }
 

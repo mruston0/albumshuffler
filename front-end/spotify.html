@@ -48,7 +48,7 @@
         if (!data || !data.artist || !data.title) {
           // Handle case when no album data is returned
           document.getElementById("helpText").setAttribute("hidden", "hidden");
-          document.getElementById("artist").innerText = "No albums found";
+          document.getElementById("artist").innerText = "Error";
           document.getElementById("albumTitle").innerText = "Please import your albums first or wait a few minutes for album import to finish.";
           document.getElementById("albumImage").src = "./assets/img/shuffle_logo.png";
           document.getElementById("albumLink").href = "#";
@@ -67,7 +67,7 @@
         console.error('Error fetching random album:', error);
         document.getElementById("helpText").setAttribute("hidden", "hidden");
         document.getElementById("artist").innerText = "Error";
-        document.getElementById("albumTitle").innerText = "Failed to load album";
+        document.getElementById("albumTitle").innerText = error.message;
         document.getElementById("albumImage").src = "./assets/img/shuffle_logo.png";
         document.getElementById("albumLink").href = "#";
         document.getElementById("spotifyWebPlayerLink").href = "#";

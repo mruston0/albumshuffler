@@ -75,7 +75,7 @@ functions:
           method: POST
   AlbumImporter:
     handler: functions/album_import_handler.handler
-    timeout: 30
+    timeout: 300
     events:
       - sqs:
           arn:

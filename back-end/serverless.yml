@@ -90,7 +90,10 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:provider.stage}-AlbumShufflerTable
-        BillingMode: PAY_PER_REQUEST 
+        BillingMode: PAY_PER_REQUEST
+        OnDemandThroughput:
+          MaxReadRequestUnits: 20
+          MaxWriteRequestUnits: 20
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -106,4 +109,37 @@ resources:
       Properties:
         QueueName: ${self:custom.albumImportQueue}
         MessageRetentionPeriod: 7200
+    HighTrafficAlarmTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:provider.stage}-AlbumShufflerHighTrafficAlarm
+        Subscription:
+          - Protocol: email
+            Endpoint: ${ssm:/AlbumShuffler/${self:provider.stage}/alert_email}
+    HighTrafficAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:provider.stage}-AlbumShufflerHighTraffic
+        AlarmDescription: Triggers when API Gateway receives more than 1000 requests in an hour
+        Namespace: AWS/ApiGateway
+        MetricName: Count
+        Dimensions:
+          - Name: ApiId
+            Value: !Ref HttpApi
+        Statistic: Sum
+        Period: 3600
+        EvaluationPeriods: 1
+        Threshold: 1000
+        ComparisonOperator: GreaterThanThreshold
+        AlarmActions:
+          - !Ref HighTrafficAlarmTopic
+    HttpApiStage:
+      Type: AWS::ApiGatewayV2::Stage
+      Properties:
+        StageName: $default
+        ApiId: !Ref HttpApi
+        AutoDeploy: true
+        DefaultRouteSettings:
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 10
  

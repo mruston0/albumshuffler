@@ -5,6 +5,7 @@ import datetime
 import random
 import logging
 import constants
+import sentry_sdk
 from data_structures import RecentAlbumInMemoryCache
 
 _logger = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ class AlbumShufflerRepo:
         return self._get_user(id, 'DEEZER')
     
     def _get_user(self, id, service):
-        item = self.table.get_item(Key={'id': id, 'sortKey': f'USER#{service}'})
+        item = self.table.get_item(Key={'id': id, 'sortKey': f'USER#{service}'}, ConsistentRead=False)
         return item.get('Item')
 
     def create_spotify_user(self, payload):
@@ -68,7 +69,7 @@ class AlbumShufflerRepo:
         )
 
     def get_album_spotify(self, user_id, album_id):
-        item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUM#{constants.SERVICE_SPOTIFY}#{album_id}'})
+        item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUM#{constants.SERVICE_SPOTIFY}#{album_id}'}, ConsistentRead=False)
         return item.get('Item')
 
     def get_album_ids_spotify(self, user_id):
@@ -76,7 +77,8 @@ class AlbumShufflerRepo:
             'ProjectionExpression':'album_id',
             'KeyConditionExpression':
                 Key('id').eq(str(user_id)) & Key('sortKey').begins_with(f'ALBUM#{constants.SERVICE_SPOTIFY}'),
-            'Limit':100
+            'Limit':100,
+            'ConsistentRead': False
         }
         
         response = self.table.query(**query_args)
@@ -91,15 +93,15 @@ class AlbumShufflerRepo:
         return items
 
     def get_user_album_count_spotify(self, user_id):
-        item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUMCOUNT#{constants.SERVICE_SPOTIFY}'})
+        item = self.table.get_item(Key={'id': user_id, 'sortKey': f'ALBUMCOUNT#{constants.SERVICE_SPOTIFY}'}, ConsistentRead=False)
         return item.get('Item')
 
     def get_random_album_spotify(self, user_id):
         if not user_id in self.user_recent_album_cache:
             self.user_recent_album_cache[user_id] = RecentAlbumInMemoryCache()
 
-        count = self.user_album_count_cache.get('user_id', self.get_user_album_count_spotify(user_id)['count'])
-        self.user_album_count_cache['user_id'] = count
+        count = self.user_album_count_cache.get(user_id, self.get_user_album_count_spotify(user_id)['count'])
+        self.user_album_count_cache[user_id] = count
         
         range_max = min(count, 1000)
         for i in range(0, int(range_max)):
@@ -146,9 +148,9 @@ class AlbumShufflerRepo:
                             'sortKey': f'ALBUM#{constants.SERVICE_SPOTIFY}#{count}',
                             'album_id': str(a['id']),
                             'title': a['name'],
-                            'cover_small': a['images'][2]['url'],
-                            'cover_medium': a['images'][1]['url'],
-                            'cover_big': a['images'][0]['url'],
+                            'cover_small': a['images'][2]['url'] if len(a.get('images', [])) > 2 else '',
+                            'cover_medium': a['images'][1]['url'] if len(a.get('images', [])) > 1 else '',
+                            'cover_big': a['images'][0]['url'] if len(a.get('images', [])) > 0 else '',
                             # Big assumption here that we want the first artist.... we can fix this another time.
                             'artist': {
                                 'id': str(a['artists'][0]['id']),
@@ -171,6 +173,7 @@ class AlbumShufflerRepo:
             import_status = 'COMPLETED'
         except Exception as exc:
             import_status = 'FAILED'
+            sentry_sdk.capture_exception(exc)
             _logger.exception(msg="Error importing Spotify albums for user", exc_info=exc, extra={'user_id': user_id})
         
         self.table.put_item(
@@ -178,6 +181,6 @@ class AlbumShufflerRepo:
                 'id': user_id,
                 'sortKey': 'ALBUMIMPORTPROCESS#SPOTIFY',
                 'status': import_status,
-                'completed': datetime.datetime.utcnow().isoformat()
+                'completed': datetime.datetime.now(datetime.timezone.utc).isoformat() 
             }
         )

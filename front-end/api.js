@@ -1,5 +1,45 @@
 class AlbumShufflerApi {
-    
+
+    constructor() {
+        this.prefetchedAlbum = null;
+        this._prefetchPromise = null;
+    }
+
+    prefetchNextAlbum() {
+        this._prefetchPromise = this.get_spotify_random_album()
+            .then(response => response.json())
+            .then(data => {
+                this.prefetchedAlbum = data;
+            })
+            .catch(() => {
+                this.prefetchedAlbum = null;
+            });
+    }
+
+    async getAlbumWithPrefetch() {
+        if (this.prefetchedAlbum) {
+            const album = this.prefetchedAlbum;
+            this.prefetchedAlbum = null;
+            this.prefetchNextAlbum();
+            return album;
+        }
+
+        if (this._prefetchPromise) {
+            await this._prefetchPromise;
+            if (this.prefetchedAlbum) {
+                const album = this.prefetchedAlbum;
+                this.prefetchedAlbum = null;
+                this.prefetchNextAlbum();
+                return album;
+            }
+        }
+
+        const response = await this.get_spotify_random_album();
+        const album = await response.json();
+        this.prefetchNextAlbum();
+        return album;
+    }
+
     login_spotify() {
         const current_url = window.location.host;
         const scopes = 'user-library-read';

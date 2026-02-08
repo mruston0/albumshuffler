@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+  <link rel="preconnect" href="https://api.albumshuffler.com" crossorigin>
+  <link rel="dns-prefetch" href="https://i.scdn.co">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/img/shuffle_logo.png">
   <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="style.css" />
@@ -29,6 +31,8 @@
  
   import { AlbumShufflerApi } from './api.js';
 
+  const api = new AlbumShufflerApi();
+
   function refresh_on_url_token() {
     console.log("refreshing since to remove token from URL....");
     const queryString = window.location.search;
@@ -40,29 +44,28 @@
     }
   }
 
+  function displayAlbum(data) {
+    if (!data || !data.artist || !data.title) {
+      document.getElementById("helpText").setAttribute("hidden", "hidden");
+      document.getElementById("artist").innerText = "Error";
+      document.getElementById("albumTitle").innerText = "Please import your albums first or wait a few minutes for album import to finish.";
+      document.getElementById("albumImage").src = "./assets/img/shuffle_logo.png";
+      document.getElementById("albumLink").href = "#";
+      document.getElementById("spotifyWebPlayerLink").href = "#";
+    }
+    else {
+      document.getElementById("helpText").removeAttribute("hidden");
+      document.getElementById("artist").innerText = data.artist.name;
+      document.getElementById("albumTitle").innerText = data.title;
+      document.getElementById("albumImage").src = data.cover_big;
+      document.getElementById("albumLink").href = `spotify://album/${data.album_id}`;
+      document.getElementById("spotifyWebPlayerLink").href = `https://open.spotify.com/album/${data.album_id}`;
+    }
+  }
+
   function shuffle() {
-    let api = new AlbumShufflerApi();
-    api.get_spotify_random_album()
-      .then(response => response.json())
-      .then(data => {
-        if (!data || !data.artist || !data.title) {
-          // Handle case when no album data is returned
-          document.getElementById("helpText").setAttribute("hidden", "hidden");
-          document.getElementById("artist").innerText = "Error";
-          document.getElementById("albumTitle").innerText = "Please import your albums first or wait a few minutes for album import to finish.";
-          document.getElementById("albumImage").src = "./assets/img/shuffle_logo.png";
-          document.getElementById("albumLink").href = "#";
-          document.getElementById("spotifyWebPlayerLink").href = "#";
-        }
-        else {
-          document.getElementById("helpText").removeAttribute("hidden");
-          document.getElementById("artist").innerText = data.artist.name;
-          document.getElementById("albumTitle").innerText = data.title;
-          document.getElementById("albumImage").src = data.cover_big;
-          document.getElementById("albumLink").href = `spotify://album/${data.album_id}`;
-          document.getElementById("spotifyWebPlayerLink").href = `https://open.spotify.com/album/${data.album_id}`;
-        }
-      })
+    api.getAlbumWithPrefetch()
+      .then(data => displayAlbum(data))
       .catch(error => {
         console.error('Error fetching random album:', error);
         document.getElementById("helpText").setAttribute("hidden", "hidden");
@@ -79,7 +82,7 @@
       refresh_on_url_token();
       let item = localStorage.getItem('albumShuffler.spotify.authToken');
       if (item != null) {
-        new AlbumShufflerApi().maybe_refresh_albums();
+        api.maybe_refresh_albums();
         shuffle();
       }
     }

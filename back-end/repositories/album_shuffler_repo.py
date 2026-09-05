@@ -120,7 +120,7 @@ class AlbumShufflerRepo:
                 'id': user_id,
                 'sortKey': 'ALBUMIMPORTPROCESS#SPOTIFY',
                 'status': 'RUNNING',
-                'started': datetime.datetime.utcnow().isoformat()
+                'started': datetime.datetime.now(datetime.timezone.utc).isoformat()
             }
         )
 
@@ -167,7 +167,7 @@ class AlbumShufflerRepo:
                 'id': user_id,
                 'sortKey': 'ALBUMCOUNT#SPOTIFY',
                 'count': count,
-                'updated': datetime.datetime.utcnow().isoformat()
+                'updated': datetime.datetime.now(datetime.timezone.utc).isoformat()
             })
 
             import_status = 'COMPLETED'
